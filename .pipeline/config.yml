@@ -29,7 +29,7 @@ steps:
 
   mtaBuild:
     buildTarget: "CF"
-    extensions: "live.mtaext"  # live.mtaext for BTP Live landscape or trial.mtaext for BTP Trial Account
+    extensions: "trial.mtaext"  # live.mtaext for BTP Live landscape or trial.mtaext for BTP Trial Account
     mtaBuildTool: "cloudMbt"
   
   cloudFoundryDeploy:   # only relevant, if you set the cloudFoundryDeploy parameter in the Release stage to true
