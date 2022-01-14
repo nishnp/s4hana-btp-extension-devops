@@ -1,0 +1,24 @@
+{
+    "RequestId": "Block_Status_Nishnanth",
+    "Requester": {
+        "Name":"nishnp",
+        "Email": "nishnanth.payani@sap.com",
+        "UserId":"nishnp",
+        "Comment":"Please Approve"
+    },
+    "BusinessPartnerDetails": {
+        "businessPartnerId": "1000199",
+        "businessPartnerFirstName": "Nishnanth",
+        "businessPartnerLastName": "Payani",
+        "businessPartnerIsBlocked": true
+    },
+    "BusinessPartnerAddress": {
+        "businessPartnerId": "1000199",
+        "addressId": "25945",
+        "cityName": "Karlsruhe",
+        "country": "DE",
+        "houseNumber": "20",
+        "postalCode": "76187",
+        "streetName": "Nancystr."
+    }
+}
