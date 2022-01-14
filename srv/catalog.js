@@ -1,12 +1,15 @@
 /* eslint-disable no-unused-vars */
 const { BusinessPartnerAddress: sdkBupaAddress, BusinessPartner: sdkBupa } = require('@sap/cloud-sdk-vdm-business-partner-service')
-
+const { WorkflowInstancesApi } = require('@sap/cloud-sdk-workflow-service-cf')
 //import { BusinessPartnerAddresses } from "@sap/cloud-sdk-vdm-business-partner-service";
 
 const cds = require('@sap/cds')
 const _ = require('lodash')
 const businessPartnerDestination = {
     "destinationName": "BusinessPartner"
+}
+const blockStatusDestination = {
+    "destinationName": "BlockStatusWfDest"
 }
 
 
@@ -25,13 +28,53 @@ module.exports = cds.service.impl(async function () {
     messaging.on('tfe/bpem/em/ce/sap/s4/beh/businesspartner/v1/BusinessPartner/Created/v1', async (msg, req) => {
         try {
             let bupaID = msg.data.BusinessPartner
-            console.log("<< BusinessPartnerCreated event caught", bupaID)
+            console.log("<< BusinessPartnerCreated event caught", bupaID)         
+
+
 
             let extBupa = await getExternalBusinessPartner(bupaID, msg)
             if (_.isUndefined(extBupa))
                 return
 
             extBupa.addresses = await bupaSrv.tx(msg).run(SELECT.from(ExtBupaAddresses).columns(addressColumns).where({ businessPartnerId: bupaID }))
+            
+            
+            
+            console.log("printing Bupa values")
+            console.log("extbupa = "+ extBupa)
+            console.log("extBupaAddress = "+extBupa.addresses)
+            console.log("Workflow start")
+            WorkflowInstancesApi.startInstance({
+                definitionId: "blockwf.block_wf_name_00",
+                context: {
+                 RequestId: "Block_Status_"+extBupa.businessPartnerFirstName,
+                 Requester: {
+                     Name:"nishnp",
+                     Email: "nishnanth.payani@sap.com",
+                     UserId:"nishnp",
+                     Comment:"Please Approve"
+                 },
+                 BusinessPartnerDetails: {
+                     businessPartnerId: bupaID,
+                     businessPartnerFirstName: extBupa.businessPartnerFirstName,
+                     businessPartnerLastName: extBupa.businessPartnerLastName,
+                     businessPartnerIsBlocked: extBupa.businessPartnerIsBlocked
+                 },
+                 BusinessPartnerAddress: {
+                     businessPartnerId: bupaID,
+                     addressId: extBupa.addresses[0].addressId,
+                     cityName: extBupa.addresses[0].cityName,
+                     country: extBupa.addresses[0].country,
+                     houseNumber: extBupa.addresses[0].houseNumber,
+                     postalCode: extBupa.addresses[0].postalCode,
+                     streetName: extBupa.addresses[0].streetName
+                 }
+             }
+             }).execute(blockStatusDestination);
+             console.log("Workflow end")
+           
+           
+           
             extBupa.verificationStatus_code = 'N'
             let insertResult = await cds.tx(msg).run(INSERT.into(BusinessPartnerVerification).entries(extBupa))
 
