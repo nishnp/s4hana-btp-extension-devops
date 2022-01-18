@@ -50,3 +50,21 @@ Content-Type: application/json
             "FirstName": "Nishnanth",
             "LastName": "Payani"
         }
+
+### get s4 data
+
+GET http://localhost:4004/op-api-business-partner-srv/A_BusinessPartnerAddress(BusinessPartner='HARUT', AddressID='124462')
+Content-Type: application/json
+
+# test patch request
+
+PATCH http://localhost:4004/op-api-business-partner-srv/A_BusinessPartnerAddress(BusinessPartner='HARUT',AddressID='124462')
+Content-Type: application/json
+
+{
+                "Country": "DE",
+                "StreetName": "Nancgbgbgbgbgystr.",
+                "HouseNumber": "20",
+                "PostalCode": "76187",
+                "CityName": "Karlsruhe"
+            }
