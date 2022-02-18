@@ -14,4 +14,4 @@ resources:
   type: org.cloudfoundry.managed-service
   parameters:
     service: workflow
-    service-plan: standard
+    service-plan: standard # use lite when running in trial account
