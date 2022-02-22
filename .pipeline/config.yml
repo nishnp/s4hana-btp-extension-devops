@@ -30,5 +30,5 @@ steps:
     mtaDeployParameters: "-f --version-rule ALL"
   tmsUpload:            # only relevant, if you set the tmsUpload parameter in the Release stage to true
    nodeName: 'BP_TFE_DEV'
-   credentialsId: 'tms'
+   credentialsId: 'tms2'
    customDescription: 'TMS Workflow Upload'
