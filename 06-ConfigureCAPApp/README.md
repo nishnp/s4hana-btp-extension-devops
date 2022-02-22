@@ -59,7 +59,9 @@ In this how to guide, you will clone an existing CAP application in SAP Business
     git clone https://github.com/YourUser/s4hana-btp-extension-devops
     ```
 
-    > IMPORTANT: Replace **YourUser** with your actual username. 
+    > IMPORTANT: Replace **YourUser** with your actual username.
+    > NOTE: if you are using SAP Workflow then please checkout to **workflow_micro_process_extension**  branch using
+    ``` git checkout workflow_micro_process_extension```
 
 12.	Click on *File* in the menu on the top and choose *Open Workspace* in the drop down.
 
