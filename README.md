@@ -92,15 +92,21 @@ Please continue either with Step 5a or 5b based on your scenario/requirement
 
 ### Step 5b: [Setup connectivity between S/4HANA system, SAP BTP - SAP Private Link (BETA)](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/05-PrivateLink)
 
+### Step 6: [Setup Workflow for Blocking and Unblocking Business Partner](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/06-configureWorkflow)
 
-### Step 6: [Configure Business Application Studio and Build/Deploy the CAP application ](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/06-ConfigureCAPApp)
-### Step 7: [Configure Event Based Communication between S/4HANA and Event Mesh](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/07-SetupEventMesh)
-### Step 8: [Test scenario End to End](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/08-TestApplication)
-### Step 9: [Access and Discover Application Logs and Metrics](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/09-ApplicationLogging)
-### Step 10: [Setup of Continuous Integration and Continuous Delivery (CI/CD) ](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/10-SetupCICD)
-### Step 11: [Setup Cloud Transport Management ](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/11-SetupTMS)
-### Step 12: [Setup Alert Notification ](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/12-SetupANS)
-### Step 13 (optional): [Setup Application Autoscaler ](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/13-SetupAppAutoscaler)
+
+> Note: There are 2 branches for this module 
+> 1. SAP CAP Application can be in the branch [workflow_micro_process](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/workflow_micro_process) 
+> 2. Workflow project can be found in the branch [workflow_module](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/workflow_module)
+
+### Step 7: [Configure Business Application Studio and Build/Deploy the CAP application ](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/06-ConfigureCAPApp)
+### Step 8: [Configure Event Based Communication between S/4HANA and Event Mesh](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/07-SetupEventMesh)
+### Step 9: [Test scenario End to End](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/08-TestApplication)
+### Step 10: [Access and Discover Application Logs and Metrics](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/09-ApplicationLogging)
+### Step 11: [Setup of Continuous Integration and Continuous Delivery (CI/CD) ](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/10-SetupCICD)
+### Step 12: [Setup Cloud Transport Management ](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/11-SetupTMS)
+### Step 13: [Setup Alert Notification ](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/12-SetupANS)
+### Step 14 (optional): [Setup Application Autoscaler ](https://github.com/SAP-samples/s4hana-btp-extension-devops/tree/mission/13-SetupAppAutoscaler)
 
 
 
