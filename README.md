@@ -27,6 +27,8 @@ John who is an employee of Business Partner Validation Firm iCredible, which is 
 
 - Vendor personnel needs access to only custom app
 
+> Note: Extended Version of same scenario with Workflow is available at [workflow_micro_process_extension](https://github.com/nishnp/s4hana-btp-extension-devops/tree/workflow_micro_process_extension)
+
 ### Solution Diagram
 
 ![solution diagram](https://github.com/SAP-samples/s4hana-btp-extension-devops/blob/main/documentation/images/solutiondiagramm-1.png)
