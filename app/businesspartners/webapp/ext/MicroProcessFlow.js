@@ -9,6 +9,8 @@ sap.ui.define([
     var startStatus;
     var approvalStatus;
     var completeStatus;
+    var cancelledStatus;
+    var RejectedStatus;
     var successIcon = "sap-icon://accept";
     var warningIcon = "sap-icon://warning";
     var errorIcon = "sap-icon://error"
@@ -26,7 +28,7 @@ sap.ui.define([
                     else if (SStep.split('-')[0] == awaitValue) {
                         return warningIcon
                     }
-                    else if (SStep.split('-')[0] == errValue) {
+                    else if (SStep.split('-')[0] == errValue || SStep.split('-')[0] == cancelledStatus || SStep.split('-')[0] == RejectedStatus) {
                         return errorIcon
                     }
                     else {
@@ -45,7 +47,7 @@ sap.ui.define([
                     else if (SStep.split('-')[1] == awaitValue) {
                         return warningIcon
                     }
-                    else if (SStep.split('-')[1] == errValue) {
+                    else if (SStep.split('-')[1] == errValue || SStep.split('-')[1] == cancelledStatus || SStep.split('-')[1] == RejectedStatus) {
                         return errorIcon
                     }
                     else {
@@ -64,7 +66,7 @@ sap.ui.define([
                     else if (SStep.split('-')[2] == awaitValue) {
                         return warningIcon
                     }
-                    else if (SStep.split('-')[2] == errValue) {
+                    else if (SStep.split('-')[2] == errValue || SStep.split('-')[2] == cancelledStatus || SStep.split('-')[2] == RejectedStatus) {
                         return errorIcon
                     }
                     else {
@@ -90,12 +92,13 @@ sap.ui.define([
                     else if (SStep.split('-')[0] == errValue) {
                         return 'Workflow Error'
                     }
+                   
                     else {
-                        return 'None'
+                        return 'no workflow triggered yet'
                     }
                 }
                 else {
-                    return 'None'
+                    return 'no workflow triggered yet'
                 }
             }
             else if (Sstatus == approvalStatus) {
@@ -107,14 +110,20 @@ sap.ui.define([
                         return 'Workflow Approval Pending'
                     }
                     else if (SStep.split('-')[1] == errValue) {
-                        return 'Workflow Rejected'
+                        return 'Workflow Error'
+                    }
+                    else if (SStep.split('-')[1] == cancelledStatus) {
+                        return 'Workflow Terminated By Approver'
+                    }
+                    else if (SStep.split('-')[1] == RejectedStatus) {
+                        return 'Workflow Approval Rejected'
                     }
                     else {
-                        return 'None'
+                        return 'no workflow triggered yet'
                     }
                 }
                 else {
-                    return 'None'
+                    return 'no workflow triggered yet'
                 }
             }
             else if (Sstatus == completeStatus) {
@@ -129,11 +138,11 @@ sap.ui.define([
                         return 'Workflow completion Error'
                     }
                     else {
-                        return 'None'
+                        return 'no workflow triggered yet'
                     }
                 }
                 else {
-                    return 'None'
+                    return 'no workflow triggered yet'
                 }
             }
 
@@ -153,11 +162,11 @@ sap.ui.define([
                         return 'Workflow start- Please check with workflow Team'
                     }
                     else {
-                        return 'None'
+                        return 'no workflow triggered yet'
                     }
                 }
                 else {
-                    return 'None'
+                    return 'no workflow triggered yet'
                 }
             }
             else if (Sstatus == approvalStatus) {
@@ -169,14 +178,20 @@ sap.ui.define([
                         return 'Workflow Approval- Approval Pending'
                     }
                     else if (SStep.split('-')[1] == errValue) {
-                        return 'Workflow Approval- Approval rejected'
+                        return 'Workflow Approval- Approval Workflow Error'
+                    }
+                    else if (SStep.split('-')[1] == cancelledStatus) {
+                        return 'Workflow Approval- Workflow Terminated By Approver'
+                    }
+                    else if (SStep.split('-')[1] == RejectedStatus) {
+                        return 'Workflow Approval- Approval Rejected By Approver'
                     }
                     else {
-                        return 'None'
+                        return 'no workflow triggered yet'
                     }
                 }
                 else {
-                    return 'None'
+                    return 'no workflow triggered yet'
                 }
             }
             else if (Sstatus == completeStatus) {
@@ -187,15 +202,15 @@ sap.ui.define([
                     else if (SStep.split('-')[2] == awaitValue) {
                         return 'Workflow Completion- pending'
                     }
-                    else if (SStep.split('-')[2] == errValue) {
+                    else if (SStep.split('-')[2] == errValue || SStep.split('-')[2] == cancelledStatus || SStep.split('-')[2] == RejectedStatus) {
                         return 'Workflow Completion- Not completed'
                     }
                     else {
-                        return 'None'
+                        return 'no workflow triggered yet'
                     }
                 }
                 else {
-                    return 'None'
+                    return 'no workflow triggered yet'
                 }
             }
 
@@ -204,15 +219,14 @@ sap.ui.define([
         FormatValue: function (SStep, Sstatus) {
             if (Sstatus == startStatus) {
                 if (SStep != null) {
-                    console.log(SStep.split('-')[0])
-                    console.log(successValue)
+                    
                     if (SStep.split('-')[0] == successValue) {
                         return 'Success'
                     }
                     else if (SStep.split('-')[0] == awaitValue) {
                         return 'Warning'
                     }
-                    else if (SStep.split('-')[0] == errValue) {
+                    else if (SStep.split('-')[0] == errValue || SStep.split('-')[0] == cancelledStatus || SStep.split('-')[0] == RejectedStatus) {
                         return 'Error'
                     }
                     else {
@@ -231,7 +245,7 @@ sap.ui.define([
                     else if (SStep.split('-')[1] == awaitValue) {
                         return 'Warning'
                     }
-                    else if (SStep.split('-')[1] == errValue) {
+                    else if (SStep.split('-')[1] == errValue || SStep.split('-')[1] == cancelledStatus || SStep.split('-')[1] == RejectedStatus) {
                         return 'Error'
                     }
                     else {
@@ -250,7 +264,7 @@ sap.ui.define([
                     else if (SStep.split('-')[2] == awaitValue) {
                         return 'Warning'
                     }
-                    else if (SStep.split('-')[2] == errValue) {
+                    else if (SStep.split('-')[2] == errValue || SStep.split('-')[2] == cancelledStatus || SStep.split('-')[2] == RejectedStatus) {
                         return 'Error'
                     }
                     else {
@@ -286,6 +300,8 @@ sap.ui.define([
         successValue = oBundle.getText("statusok");
         awaitValue = oBundle.getText("statusapproval");
         errValue = oBundle.getText("statuserr");
+        cancelledStatus = oBundle.getText("statuscancelled");
+        RejectedStatus = oBundle.getText("statusreject");
         startStatus = oBundle.getText("stepone");
         approvalStatus = oBundle.getText("steptwo");
         completeStatus = oBundle.getText("stepthree");
@@ -308,7 +324,7 @@ sap.ui.define([
         }
         const oPopover = new sap.m.Popover({
             contentWidth: "300px",
-            title: "Order status",
+            title: "Workflow Status",
             content: [
                 new sap.m.HBox({
                     items: [

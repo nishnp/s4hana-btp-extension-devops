@@ -40,7 +40,7 @@ Authorization: Basic YnAtYWRtaW46MTIz
 
 ### update s4 data
 
-POST http://localhost:39383/op-api-business-partner-srv/A_BusinessPartner
+POST http://localhost:4004/op-api-business-partner-srv/A_BusinessPartner
 Content-Type: application/json
 
 

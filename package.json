@@ -58,7 +58,7 @@
         },
         "requires": {
             "db": {
-                "kind": "hana"
+                "kind": "sql"
             },
             "messaging": {
                 "kind": "file-based-messaging",

@@ -11,11 +11,12 @@ const businessPartnerDestination = {
 const blockStatusDestination = {
     "destinationName": "BlockStatusWfDest"
 }
-const Block_Definition_id = "blockwf.block_wf_name_00"
+const Block_Definition_id = "tfe.bp.block_unblock_wf"
+const Rule_Service_id = process.env["RULE_SERVICE_ID"]
 
 
 module.exports = cds.service.impl(async function () {
-
+console.log(cds.require)
     const { BusinessPartnerVerification, Addresses: AddressVerification } = this.entities
     const bupaSrv = await cds.connect.to('OP_API_BUSINESS_PARTNER_SRV')
     const messaging = await cds.connect.to("messaging")
@@ -48,7 +49,7 @@ module.exports = cds.service.impl(async function () {
     })
 
     this.before("READ", BusinessPartnerVerification, async (req) => {
-        console.log("inside read Request")
+        
         const verificationColumns = ["ID", 'businessPartnerId', 'businessPartnerFirstName', 'businessPartnerLastName', 'businessPartnerIsBlocked', 'verificationStatus_code', 'workflowId', 'workflowStatus']
         let bpVerificationList = await cds.tx(req).run(SELECT.from(BusinessPartnerVerification).columns(verificationColumns))
         bpVerificationList.forEach(function (element) {
@@ -91,7 +92,7 @@ module.exports = cds.service.impl(async function () {
         if (_.isUndefined(extBupa))
             return
         extBupa.addresses = await bupaSrv.tx(req).run(SELECT.from(ExtBupaAddresses).columns(addressColumns).where({ businessPartnerId: extBupa.businessPartnerId }))
-        startWorkflow(extBupa, "Block_Status_Block_" + extBupa.businessPartnerFirstName, true, req);
+        startWorkflow(extBupa, "Block_Status_Block_" + extBupa.businessPartnerFirstName, true, req,"Blocked");
     })
 
     this.on("unblock", async (req) => {
@@ -102,7 +103,7 @@ module.exports = cds.service.impl(async function () {
         if (_.isUndefined(extBupa))
             return
         extBupa.addresses = await bupaSrv.tx(req).run(SELECT.from(ExtBupaAddresses).columns(addressColumns).where({ businessPartnerId: extBupa.businessPartnerId }))
-        startWorkflow(extBupa, "Block_Status_Un_Block_" + extBupa.businessPartnerFirstName, false, req);
+        startWorkflow(extBupa, "Block_Status_Un_Block_" + extBupa.businessPartnerFirstName, false, req, "Unblocked");
 
     })
 
@@ -123,7 +124,7 @@ module.exports = cds.service.impl(async function () {
             let bupaVerification = await cds.tx(msg).run(SELECT.one(BusinessPartnerVerification).columns(verificationColumns).where({ businessPartnerId: bupaID }))
             if (!bupaVerification) {
                 extBupa.verificationStatus_code = 'U'
-                let insertResult = await cds.tx(msg).run(INSERT.into(BusinessPartnerVerification).entries(extBupa))
+                await cds.tx(msg).run(INSERT.into(BusinessPartnerVerification).entries(extBupa))
                 bupaVerification = await cds.tx(msg).run(SELECT.one(BusinessPartnerVerification).columns(verificationColumns).where({ businessPartnerId: bupaID }))
             }
             bupaVerification.businessPartnerLastName = extBupa.businessPartnerLastName
@@ -160,37 +161,46 @@ module.exports = cds.service.impl(async function () {
 
     async function getInstanceDetails(instanceId, req, bupaID) {
         const statusResponse = await WorkflowInstancesApi.getInstance(instanceId).execute(blockStatusDestination);
-        if (statusResponse.status.toUpperCase() == "CANCELED" || statusResponse.status.toUpperCase() == "ERRONEOUS") {
-            let resultrunn = await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Error-NA" }).where({ ID: bupaID }))
+        if (statusResponse.status.toUpperCase() == "CANCELED") {
+            await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Cancel-NA" }).where({ ID: bupaID }))
         }
-        else if(statusResponse.status.toUpperCase() == "RUNNING"){
-            let resultrunn = await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Await-NA" }).where({ ID: bupaID }))
+        else if(statusResponse.status.toUpperCase() == "ERRONEOUS"){
+            await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Error-NA" }).where({ ID: bupaID }))
+        }
+        else if (statusResponse.status.toUpperCase() == "RUNNING") {
+           await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Await-NA" }).where({ ID: bupaID }))
         }
         else if (statusResponse.status.toUpperCase() == "COMPLETED") {
             const response = await WorkflowInstancesApi.getInstanceContext(instanceId).execute(blockStatusDestination);
             if (response.decision.toUpperCase() == "APPROVE") {
-                let resultrunn = await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Ok-Ok" }).where({ ID: bupaID }))
+               await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Ok-Ok" }).where({ ID: bupaID }))
 
             }
             else if (response.decision.toUpperCase() == "REJECT") {
-                let resultrunn = await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Error-NA" }).where({ ID: bupaID }))
+                await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Reject-NA" }).where({ ID: bupaID }))
 
             }
 
+        }
+        else{
+           await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "NA-NA-NA" }).where({ ID: bupaID }))
+           await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowId': "" }).where({ ID: bupaID }))
         }
 
 
     }
 
-    async function startWorkflow(extBupa, requestId, businessPartnerStatus, req) {
+    async function startWorkflow(extBupa, requestId, businessPartnerStatus, req,status) {
+        console.log("Started WOrkflow")
+        console.log("ExtBupa ",extBupa)
+        
         const response = await WorkflowInstancesApi.startInstance({
             definitionId: Block_Definition_id,
             context: {
                 RequestId: requestId,
+                blockUnblockStatus:status,
+                ruleServiceId:Rule_Service_id,
                 Requester: {
-                    Name: "nishnp",
-                    Email: "nishnanth.payani@sap.com",
-                    UserId: "nishnp",
                     Comment: "Please Approve"
                 },
                 BusinessPartnerDetails: {
@@ -210,18 +220,16 @@ module.exports = cds.service.impl(async function () {
                 }
             }
         }).execute(blockStatusDestination);
+        console.log(response)
         let bupaID = req.params[0].ID
-
-        console.log(response.id)
-
         try {
 
             let result = await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowId': response.id }).where({ ID: bupaID }))
             if (response.status == "RUNNING" || response.status == "Running") {
-                let resultrunn = await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Await-NA" }).where({ ID: bupaID }))
+              await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Ok-Await-NA" }).where({ ID: bupaID }))
             }
             else if (response.status == "Erroneous" || response.status == "ERRONEOUS") {
-                let resulterr = await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Err-NA-NA" }).where({ ID: bupaID }))
+             await cds.run(UPDATE(BusinessPartnerVerification).set({ 'workflowStatus': "Error-NA-NA" }).where({ ID: bupaID }))
             }
             console.log(result)
         } catch (error) {
